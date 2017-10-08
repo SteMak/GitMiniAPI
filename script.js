@@ -5,27 +5,20 @@ const getGoodCardsData = () => {
 }
 
 var userQuery = {
-        filter: {
-            starsCount: null,
-            language: null,
-            dateUpdate: null,
-            type: null,
-            hasTopics: false,
-            hasOpenIssues: false
-        }, 
-        order: {
-            repoName: false,
-            starsCount: false,
-            openIssues: false,
-            dateUpdate: false
-        },
-        offset: 0,
-        limit: 6
+    filter: {
+        starsCount: null,
+        language: null,
+        dateUpdate: null,
+        type: null,
+        hasTopics: false,
+        hasOpenIssues: false
+    },
+    offset: 0,
+    limit: 6,
+    filedSort: 'name',
+    inverseSort: false
 };
 
-function tt(e) {
-    console.log(e);
-}
 const app = function () {
     const formSignin = document.querySelector('.form-signin');
 
@@ -54,8 +47,9 @@ const app = function () {
                 starsCount: item.stargazers_count,
                 language: item.language,
                 dateUpdate: item.updated_at,
+                openIssues: item.open_issues_count,
                 hasOpenIssues: item.open_issues_count > 0,
-// TODO search topics
+                // TODO search topics
                 hasTopics: true
             };
         });
@@ -66,14 +60,24 @@ const app = function () {
      * 
      * @param {arrary} data 
      * @param {string} field - 'name', 'dateUpdate', 'starsCount', 'issuesCount' 
-     * @param {string} direct - 'ascending' or 'descending' 
+     * @param {boolean} inverse
      */
-    function orderByField(data, field, direct) {
+    function orderByField(data, field, inverse) {
         var result = data.sort(function(a, b) {
-            if (a[field].toLowerCase() > b[field].toLowerCase()) {
-                return 1;
-            }   else if (a[field].toLowerCase() < b[field].toLowerCase()) {
-                return -1;
+            var aN, bN;
+
+            if (typeof a[field] == 'string') {
+                aN = a[field].toUpperCase();
+                bN = b[field].toUpperCase();
+            }   else {
+                aN = a[field];
+                bN = b[field];
+            }
+
+            if (aN > bN) {
+                return !inverse ? 1 : -1;
+            }   else if (aN < bN) {
+                return !inverse ? -1 : 1;
             }   else {
                 return 0;
             }
@@ -88,22 +92,29 @@ const app = function () {
     }
 
     function handlerSorting(event) {
-        // TODO getting filed name and update userQuery.filedSort
-        // TODO getting direct sort and update userQuery.directSort
-        userQuery.order[event.target.name] = event.target.checked;
+        if(event.target.type == 'checkbox') {
+            userQuery.inverseSort = event.target.checked;            
+        }   else {
+            userQuery.filedSort = event.target.value;
+        }
         cardsCreating();
+    }
+
+    function handlerPagination(event) {
+        event.preventDefault();
+        var data = event.target.dataset;
+        console.log(data.num);
+        //userQuery.offset = event;
     }
 
     function pageCardsCreating() {
         const target = document.querySelector('#content');    
         target.innerHTML = pageCardsTemplate();
         target.querySelector('.filter').onchange = handlerFilter;
-        target.querySelector('.sorting').onchange = handlerSorting; 
-        // TODO add prepare user click pagination and update userQuery.offset  
-        //target.querySelector('.pagination').onclick = handlerPagination; 
+        target.querySelector('.sorting').onchange = handlerSorting;
     }
 
-    function applyUserQuery() {
+    function applyUserQuery() { 
         var result = getGoodCardsData();
 
 // TODO filter dateUpdate
@@ -143,7 +154,9 @@ const app = function () {
             });
         }
         
-        // TODO apply userQuery.filedSort and userQuery.directSort use function orderByField
+        if(userQuery.filedSort) {
+            result = orderByField(result, userQuery.filedSort, userQuery.inverseSort);
+        }
         // TODO add limit and apply userQuery.offset
 
         return result;
@@ -155,7 +168,9 @@ const app = function () {
         target.innerHTML = cardsTemplate(data);
         const nav = document.querySelector('#nav');    
         nav.innerHTML = pagTemplate(data.length);
+        nav.onclick = handlerPagination; 
     }
+
 // TODO delete message if new one
     function errorMessage(message) {
         const target = document.querySelector('#content');
