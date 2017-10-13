@@ -13,7 +13,7 @@ var userQuery = {
         hasTopics: false,
         hasOpenIssues: false
     },
-    offset: 0,
+    numOfPage: 1,
     limit: 6,
     filedSort: 'name',
     inverseSort: false
@@ -24,22 +24,49 @@ const app = function () {
 
     function reuestProjects(owner) {
         const link = 'https://api.github.com/users/' + owner + '/repos';
+
+        return reuest(link);
+    };
+
+    function reuest(url) {
         let result;
         
         var xhr = new XMLHttpRequest();
-        xhr.open('GET', link, false);
+        xhr.open('GET', url, false);
         xhr.send();
         if (xhr.status != 200) {
             result = xhr.status + ': ' + xhr.statusText;
         } else {
             result = JSON.parse(xhr.responseText);
         }
+
         return result;
     };
 
     function prepareCardsData(falseData) {
         return falseData.map(function (item) {
             return {
+                // TODO contributors
+                contributors: [
+                    {
+                        name: '',
+                        link: ''
+                    }
+                ],
+                // TODO pullRequasts               
+                pullRequasts: [
+                    {
+                        title: '',
+                        link: ''
+                    }
+                ],
+                // TODO linkFork
+                linkFork: '',
+                // TODO languages
+                languages: item.languages_url,
+                // TODO search topics
+
+                link: item.html_url,
                 name: item.name,
                 description: item.description,
                 fork: item.fork ? 'Fork': 'Source',
@@ -48,9 +75,7 @@ const app = function () {
                 language: item.language,
                 dateUpdate: item.updated_at,
                 openIssues: item.open_issues_count,
-                hasOpenIssues: item.open_issues_count > 0,
-                // TODO search topics
-                hasTopics: true
+                hasOpenIssues: item.open_issues_count > 0
             };
         });
     }
@@ -103,8 +128,16 @@ const app = function () {
     function handlerPagination(event) {
         event.preventDefault();
         var data = event.target.dataset;
-        console.log(data.num);
-        //userQuery.offset = event;
+        if(data.num) {
+            if(data.num == 'prev' && userQuery.numOfPage > 1) {
+                userQuery.numOfPage--;
+            }   else if(data.num == 'next' && userQuery.numOfPage < Math.ceil(getGoodCardsData().length / 6)) {
+                userQuery.numOfPage++;
+            }   else if(data.num !== 'prev' && data.num !== 'next') {
+                userQuery.numOfPage = data.num;
+            }
+            cardsCreating();
+        }
     }
 
     function pageCardsCreating() {
@@ -117,7 +150,7 @@ const app = function () {
     function applyUserQuery() { 
         var result = getGoodCardsData();
 
-// TODO filter dateUpdate
+        // TODO filter dateUpdate
         if(userQuery.filter.dateUpdate) {
             result = result.filter(function(item) {
                 return item.dateUpdate;
@@ -157,7 +190,20 @@ const app = function () {
         if(userQuery.filedSort) {
             result = orderByField(result, userQuery.filedSort, userQuery.inverseSort);
         }
-        // TODO add limit and apply userQuery.offset
+
+        if(userQuery.numOfPage) {
+            result = result.slice(userQuery.numOfPage * 6 - 6, userQuery.numOfPage * 6)
+        }
+
+        return result;
+    }
+
+    function createArrayWithNumbersFromOneTo(x) {
+        result = [];
+
+        for (let i = 1; i <= x; i++) {
+            result.push(i);
+        }
 
         return result;
     }
@@ -167,11 +213,11 @@ const app = function () {
         const target = document.querySelector('#cards');    
         target.innerHTML = cardsTemplate(data);
         const nav = document.querySelector('#nav');    
-        nav.innerHTML = pagTemplate(data.length);
+        nav.innerHTML = pagTemplate(createArrayWithNumbersFromOneTo(Math.ceil(getGoodCardsData().length / 6)));
         nav.onclick = handlerPagination; 
     }
 
-// TODO delete message if new one
+    // TODO delete message if new one
     function errorMessage(message) {
         const target = document.querySelector('#content');
         const error = document.createElement("div");
@@ -183,7 +229,7 @@ const app = function () {
         event.preventDefault();
         const input = this.querySelector('input[name=login]');
         
-// TODO result to Array
+        // TODO result to Array
 
         const result = reuestProjects(input.value);
 
