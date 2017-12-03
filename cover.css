@@ -161,37 +161,41 @@ body {
 /* app style */
 .card-inverse 
 {
-    background-color: #333;
-    border-color: #333;
+  background-color: #333;
+  border-color: #333;
 }
-.pag-inverse:visited
+.pag-inverse, .pag-inverse:hover, .pag-inverse:focus
 {
-    background-color: #333;
-    border-color: #333;
-    color: #fff;
+  background-color: #333;
+  border-color: #333;
+  color: #fff;
 }
 .dropDown 
 {
-    width: 60%;
+  width: 60%;
 }
 .inputInDropDown 
 {
-    width: 30%;
+  width: 30%;
 }
 .filter .col
 {
-    width: 25%;
+  width: 25%;
 }
 #inputFiledSort
 {
-    width: 80%;
-    display: unset;
+  width: 80%;
+  display: unset;
 }
 .updateAfter
 {
-    padding: .37rem .75rem;
+  padding: .37rem .75rem;
 }
 #cards .col
 {
-    margin-top: 15px;
+  margin-top: 15px;
+}
+.card
+{
+  padding: 12px;
 }

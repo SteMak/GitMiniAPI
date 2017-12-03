@@ -68,11 +68,11 @@ const app = function () {
 
                 link: item.html_url,
                 name: item.name,
-                description: item.description,
+                description: item.description ? item.description: 'No description',
                 fork: item.fork ? 'Fork': 'Source',
                 type: item.fork ? 'fork': 'source',
                 starsCount: item.stargazers_count,
-                language: item.language,
+                language: item.language ? item.language: 'No language',
                 dateUpdate: item.updated_at,
                 openIssues: item.open_issues_count,
                 hasOpenIssues: item.open_issues_count > 0
@@ -111,12 +111,14 @@ const app = function () {
         return result;
     }
 
-    function handlerFilter(event) {
+    function handlerFilter(event) { 
+        event.preventDefault();
         userQuery.filter[event.target.name] = event.target.type == 'checkbox' ? event.target.checked: event.target.value; 
         cardsCreating();
     }
 
     function handlerSorting(event) {
+        event.preventDefault();
         if(event.target.type == 'checkbox') {
             userQuery.inverseSort = event.target.checked;            
         }   else {
@@ -144,6 +146,7 @@ const app = function () {
         const target = document.querySelector('#content');    
         target.innerHTML = pageCardsTemplate();
         target.querySelector('.filter').onchange = handlerFilter;
+        target.querySelector('.filter').onsubmit = handlerFilter;
         target.querySelector('.sorting').onchange = handlerSorting;
     }
 

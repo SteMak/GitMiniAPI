@@ -58,10 +58,6 @@
                                 <input name="starsCount" type="number" class="form-control starsCount" id="inputStarsCount">
                             </div>
                             <div class="form-group col">
-                                <label for="inputUpdateAfter" class="col-form-label">Update After</label>
-                                <input name="updateAfter" type="date" class="form-control updateAfter" id="inputUpdateAfter">
-                            </div>
-                            <div class="form-group col">
                                 <label for="inputType" class="col-form-label">Type</label>
                                 <select name="type" class="form-control type" id="inputType">
                                     <option value="">All</option>
@@ -587,30 +583,14 @@
     <script>
         const cardsTemplate = (data) => {
             return data.map(function(item, i) {
-                return `<!-- Modal and Card -->
-                    <div class="modal fade" id="${i}Modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">Card Of Project</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    ${item.name}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                return `<!-- Card -->
                     <div class="col-6">
                         <div class="card card-inverse text-center" data-toggle="modal" data-target="#${i}Modal">
-                            <h2 class="card__repoName">${item.name}</h2>
-                            <p class="card__descr card-text">${item.description}</p>
-                            <p class="card__isFork card-text">${item.fork}</p>
-                            <p class="card__starsCount card-text">${item.starsCount}</p>
-                            <p class="card__language card-text">${item.language}</p>
-                            <p class="card__DateUpdate card-text text-muted">${item.dateUpdate}</p>
+                            <h2 class="card__repoName"><a href="${item.link}" target="_blank">${item.name}</a></h2>
+                            <p class="card__descr card-text">Description: ${item.description}</p>
+                            <p class="card__isFork card-text">Type: ${item.fork}</p>
+                            <p class="card__starsCount card-text">Stars count: ${item.starsCount}</p>
+                            <p class="card__language card-text">Language: ${item.language}</p>
                         </div>            
                     </div>`;
             }).join('');}
