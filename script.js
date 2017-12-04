@@ -222,7 +222,6 @@ const app = function () {
     }
 
     function nameCreating() {
-        console.log(state.name)
         const target = document.querySelector('#name');    
         target.innerHTML = nameTemplate(state.name);
     }
