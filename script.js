@@ -45,6 +45,7 @@ const app = function () {
 
     function prepareCardsData(falseData) {
         return falseData.map(function (item) {
+            let log = item.owner.login;
             return {
                 // TODO contributors
                 contributors: [
@@ -65,9 +66,10 @@ const app = function () {
                 // TODO languages
                 languages: item.languages_url,
                 // TODO search topics
-
+                
+                name: item.owner.login,
                 link: item.html_url,
-                name: item.name,
+                name: log,
                 description: item.description ? item.description: 'No description',
                 fork: item.fork ? 'Fork': 'Source',
                 type: item.fork ? 'fork': 'source',
@@ -220,6 +222,12 @@ const app = function () {
         nav.onclick = handlerPagination; 
     }
 
+    function nameCreating() {
+        const data = getGoodCardsData();
+        const target = document.querySelector('#name');    
+        target.innerHTML = nameTemplate(goodCardsData[0].name);
+    }
+
     // TODO delete message if new one
     function errorMessage(message) {
         const target = document.querySelector('#content');
@@ -241,6 +249,7 @@ const app = function () {
 
             pageCardsCreating();
             cardsCreating();
+            nameCreating();
         } else {
             errorMessage(result);
         }
