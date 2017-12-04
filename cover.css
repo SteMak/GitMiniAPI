@@ -170,6 +170,10 @@ body {
   border-color: #333;
   color: #fff;
 }
+#inverseSort
+{
+  padding-top: 30px;
+}
 .dropDown 
 {
   width: 60%;
@@ -184,7 +188,7 @@ body {
 }
 #inputFiledSort
 {
-  width: 80%;
+  width: 100%;
   display: unset;
 }
 .updateAfter

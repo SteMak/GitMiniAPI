@@ -45,7 +45,6 @@ const app = function () {
 
     function prepareCardsData(falseData) {
         return falseData.map(function (item) {
-            let log = item.owner.login;
             return {
                 // TODO contributors
                 contributors: [
@@ -69,7 +68,7 @@ const app = function () {
                 
                 name: item.owner.login,
                 link: item.html_url,
-                name: log,
+                name: item.name,
                 description: item.description ? item.description: 'No description',
                 fork: item.fork ? 'Fork': 'Source',
                 type: item.fork ? 'fork': 'source',
