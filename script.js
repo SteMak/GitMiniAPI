@@ -1,4 +1,5 @@
 var goodCardsData;
+var state = {};
 
 const getGoodCardsData = () => {
     return goodCardsData;    
@@ -66,7 +67,6 @@ const app = function () {
                 languages: item.languages_url,
                 // TODO search topics
                 
-                name: item.owner.login,
                 link: item.html_url,
                 name: item.name,
                 description: item.description ? item.description: 'No description',
@@ -222,9 +222,9 @@ const app = function () {
     }
 
     function nameCreating() {
-        const data = getGoodCardsData();
+        console.log(state.name)
         const target = document.querySelector('#name');    
-        target.innerHTML = nameTemplate(goodCardsData[0].name);
+        target.innerHTML = nameTemplate(state.name);
     }
 
     // TODO delete message if new one
@@ -240,7 +240,7 @@ const app = function () {
         const input = this.querySelector('input[name=login]');
         
         // TODO result to Array
-
+        state.name = input.value
         const result = reuestProjects(input.value);
 
         if (Array.isArray(result)) {
